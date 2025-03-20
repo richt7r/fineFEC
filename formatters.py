@@ -2,18 +2,24 @@ import numpy as np
 import networkx as nx
 from pathlib import Path
 
-def array_to_str(array: np.ndarray): return str(array).replace('\n','').strip('[] ')
+def array_to_str(array: np.ndarray): 
+    return str(array).replace('\n','').strip('[] ')
 
 def from_matlab_indices_to_python_indices(load_path: Path):
     file = open(str(load_path)).readlines()
     rows = np.zeros(len(file),dtype=int)
     cols = np.zeros(len(file),dtype=int)
-    for i,line in enumerate(file):
-        rows[i],cols[i] = int(line.strip('\n ').split(' ')[0]),int(line.strip('\n ').split(' ')[-1])
+    i=0
+    for line in file:
+        content = line.strip('\n ').split(' ')
+        if content[0].isdigit():
+            rows[i],cols[i] = int(content[0]),int(content[-1])
+            i+=1
+    rows,cols = rows[:i],cols[:i]
     H = np.zeros((rows.max(),cols.max()),dtype=int)
     H[rows-1,cols-1] = 1
     i1,i2 = np.where(H)
-    sparce_file = open(f'{str(load_path.parent.joinpath(load_path.stem+'_python_ids'+load_path.suffix))}','w')
+    sparce_file = open(f'{str(load_path.parent.joinpath(load_path.stem+'_python_indices'+load_path.suffix))}','w')
     np.set_printoptions(threshold=np.inf)
     sparce_file.write(f'{array_to_str(i1)}\n{array_to_str(i2)}\n')
     sparce_file.close()

@@ -1,1 +1,42 @@
-DO NOT EVER READ ME
+fineFEC - forward error correction algorithms simulator 
+
+USAGE:
+    python simulus.py <path_to_config>
+
+CONFIGURATION:
+    h_path = <path_to_matrix>
+    dump_path = <path_to_dump_file>
+    terminal_output = True/False
+    decoder = spa
+    num_iterations = 6
+    num_threads = 1    
+    snr_range = 2:8:0.1
+    errors_to_point = 10000
+    seed=13
+
+LDPC MATRIX FORMAT:
+
+	two coordinate vectors:
+		line 1: row edge coordinates
+		line 2: colomn edge coordinates
+		examples: ~/codes/ldpc/matrices/dvbs2/
+		
+		taking dvbs2 matrices from matlab to simulator:
+			"""matlab 2024"""
+			diary path/to/some_file.txt
+			dvbs2ldpc(1/4,'indices')
+			"""python"""
+			from formatters import from_matlab_indices_to_python_indices
+			from pathlib import Path 
+			from_matlab_indices_to_python_indices(Path('path/to/some_file.txt'))
+			// some_file_python_indices.txt file creates at the same directory as some_file.txt
+			"""path/to/some_config.conf"""
+			h_path = path/to/some_file_python_indices.txt
+
+YET SUPPORTED:
+    LDPC:
+        DECODING:
+        	spa_py (Sum-Product Algorithm)
+
+developed and (probably still) maintained by Tyap&Lyap LLC
+(perhaps) all rights reserved
