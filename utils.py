@@ -43,9 +43,16 @@ def output(bits,errors,dump,config,snr,start_time):
 def build_config(config_path: Path):
     config_data = open(config_path).readlines()
     config = {}
+    config['config_path'] = config_path
     for line in config_data:
         param = line.split('=')
         config[param[0].strip(' ')] = param[1].strip(' \n')
+    param_adv = [param == "" for param in config.values()]
+    if sum(param_adv):
+        missing_params = np.array(list(config.keys()))[np.where(param_adv)[0]]
+        raise ValueError(
+            f"following parameters not specified in {config_path}:\n{missing_params}"
+        )
     return config
 
 def build_header(config_path: Path):
@@ -56,8 +63,3 @@ def build_header(config_path: Path):
     header+=f'\nsnr\t\t\tber\t\t\t\tsim_speed\n'
     return header
 
-def dump_decorator(func):
-    def wrapper(**kwargs):
-        func(**kwargs)
-        return func
-    return wrapper
